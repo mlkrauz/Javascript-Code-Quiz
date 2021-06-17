@@ -1,0 +1,32 @@
+:root {
+    font-family: Tahoma, Verdana, Geneva, sans-serif;
+
+    box-sizing: border-box;
+
+    --headerColor: #91c2ff;
+    --backgroundColor: #daebff;
+    --accentColor: #ffa640;
+}
+
+body {
+    margin: 0;
+    background-color: var(--backgroundColor);
+    size: 12px;
+}
+
+.titleHeader {
+    width: 100%;
+    margin: 0 0;
+    padding: 2em 0;
+    box-shadow: 0 .5em 2em var(--accentColor);
+
+    text-align: center;
+
+    background-color: var(--headerColor);
+}
+
+.quiz-container {
+    width: 100%;
+    flex-flow: column wrap;
+    border: solid;
+}

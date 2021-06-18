@@ -1,11 +1,13 @@
 :root {
     font-family: Tahoma, Verdana, Geneva, sans-serif;
 
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
 
     --headerColor: #91c2ff;
-    --backgroundColor: #daebff;
+    --foregroundColor: #daebff;
+    --backgroundColor: #f0f7ff;
     --accentColor: #ffa640;
+
 }
 
 body {
@@ -14,19 +16,66 @@ body {
     size: 12px;
 }
 
-.titleHeader {
-    width: 100%;
-    margin: 0 0;
-    padding: 2em 0;
-    box-shadow: 0 .5em 2em var(--accentColor);
+#titleHeader {
+    
 
     text-align: center;
 
     background-color: var(--headerColor);
 }
 
-.quiz-container {
-    width: 100%;
+main {
+    height: auto;
+}
+
+#quiz-header,
+#quiz-footer {
+    height: 4em;
+
+    /* background-color: var(--foregroundColor); */
+    border: .25em solid var(--backgroundColor);
+    border-radius: 1em;
+    box-shadow: 0 .5em 2em -1em var(--accentColor);
+
+    background-color: var(--foregroundColor);
+}
+
+#quiz-container {
+    width: 75%;
+
+    margin: auto;
+
     flex-flow: column wrap;
-    border: solid;
+}
+
+#quiz-content {
+    height: 15em;
+}
+
+.button {
+    font-size: 16px;
+    font-family: inherit;
+
+    padding: .2em 1em;
+    border-radius: .5em;
+    border: .2em solid var(--foregroundColor);
+
+    background-color: var(--headerColor);
+}
+
+#startStopButton {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    margin: 1em auto;
+}
+
+.standard-margin-padding {
+    width: 75%;
+    margin: 1em auto;
+    padding: 2em 0;
+
+    border: .25em solid var(--backgroundColor);
+    border-radius: 1em;
+    box-shadow: 0 .5em 2em -1em var(--accentColor);
 }

@@ -17,8 +17,6 @@ body {
 }
 
 #titleHeader {
-    
-
     text-align: center;
 
     background-color: var(--headerColor);
@@ -31,8 +29,8 @@ main {
 #quiz-header,
 #quiz-footer {
     height: 4em;
+    text-align: center;
 
-    /* background-color: var(--foregroundColor); */
     border: .25em solid var(--backgroundColor);
     border-radius: 1em;
     box-shadow: 0 .5em 2em -1em var(--accentColor);

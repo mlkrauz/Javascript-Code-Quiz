@@ -1,7 +1,11 @@
+//#region querySelectors
+
 var quizHeaderEl = document.querySelector("#quiz-header");
 var quizContentEl = document.querySelector("#quiz-content");
 var quizFooterEl = document.querySelector("#quiz-footer");
 var buttonStartStop = document.querySelector("#startStopButton");
+
+//#endregion querySelectors
 
 //class object for handling QuizItems
 class QuizItem {
@@ -10,9 +14,32 @@ class QuizItem {
     constructor(question, correctA, wrongA1, wrongA2, wrongA3) {
         this.question = question;
         this.correctA = correctA;
-        this.wrongA1 = wrongA1;
-        this.wrongA2 = wrongA2;
-        this.wrongA3 = wrongA3;
+        this.answers = [correctA, wrongA1, wrongA2, wrongA3];
+    }
+
+    //Creates question & answer elements, randomizes answer order, and appends answers to a div element.
+    //Returns unappended div element, and appended question/answer children.
+    createElements() {
+        //Create div container
+        var divEl = document.createElement("div");
+
+        //Create h3 element for title, set its text to the question, append to div.
+        var questionEl = document.createElement("h3");
+        questionEl.textContent = this.question;
+        divEl.appendChild(questionEl);
+
+        //create a shuffled indexer for our answers
+        var answerIndex = shuffleIndex(this.answers.length);
+
+        //loop through and create answer button elements, append them to the bottom of the question element.
+        for (var i = 0; i < this.answers.length; i++) {
+            var buttonEl = document.createElement("button");
+            buttonEl.textContent = this.answers[answerIndex[i]];
+
+            divEl.append(buttonEl);
+        }
+
+        return divEl;
     }
 }
 
@@ -67,11 +94,14 @@ function startQuiz() {
         
         
     }
+
+    quizContentEl.append(questionBank[0].createElements())
 }
 
 //#region helperFunctions
 
 //My less-than-efficient implementation of the fisher-yates shuffle algorithm.
+//returns an array of length arrayLength containing shuffled index positions.
 function shuffleIndex(arrayLength) {
     //Create a new array of the same length as the passed in value
     var newIndex = new Array(arrayLength);

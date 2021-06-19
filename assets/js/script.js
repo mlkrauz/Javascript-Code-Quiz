@@ -55,3 +55,43 @@ var questionBank = [
     )
 ];
 
+//My less-than-efficient implementation of the fisher-yates shuffle algorithm.
+function shuffleIndex(arrayLength) {
+    //Create a new array of the same length as the passed in value
+    var newIndex = new Array(arrayLength);
+
+    var temp;
+
+    //populate the array with 0..arrayLength, because I haven't figured out a better way of doing it.
+    for (var i = 0; i < arrayLength; i++) {
+        newIndex[i] = i;
+    }
+
+    for (var i = arrayLength-1; i > 0; i--) {
+        //random number i > j > 0
+        var j = Math.floor(Math.random() * i);
+        //swap newIndex[i] with newIndex[j]
+        temp = newIndex[j];
+        newIndex[j] = newIndex[i];
+        newIndex[i] = temp;
+    }
+
+    console.log(newIndex);
+}
+
+function startQuiz() {
+    //buttonStartStop.setAttribute("disabled","true");
+
+    //shuffle index - to randomize the question order
+    shuffleIndex(questionBank.length);
+    
+    for (var i = 0; i < questionBank.length; i++) {
+        
+        
+    }
+}
+
+
+buttonStartStop.addEventListener("click", function(){
+    startQuiz()
+})

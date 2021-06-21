@@ -14,10 +14,11 @@ body {
     margin: 0;
     background-color: var(--backgroundColor);
     size: 12px;
+    text-align: center;
 }
 
 #titleHeader {
-    text-align: center;
+    /* text-align: center; */
 
     background-color: var(--headerColor);
 }
@@ -29,7 +30,7 @@ main {
 #quiz-header,
 #quiz-footer {
     height: 4em;
-    text-align: center;
+    /* text-align: center; */
 
     border: .25em solid var(--backgroundColor);
     border-radius: 1em;
@@ -40,19 +41,29 @@ main {
 
 #quiz-container {
     width: 75%;
-
     margin: auto;
-
-    flex-flow: column wrap;
 }
 
 #quiz-content {
     height: 15em;
 }
 
+#quiz-content div div{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+#quiz-content div h3 {
+    width: 100%
+}
+
 button {
     font-size: 16px;
     font-family: inherit;
+
+    /* For buttons within flex boxes*/
+    align-self: center;
 
     padding: .2em 1em;
     border-radius: .5em;
@@ -63,8 +74,8 @@ button {
 
 #startStopButton {
     position: relative;
-    left: 50%;
-    transform: translate(-50%);
+    /* left: 50%;
+    transform: translate(-50%); */
     margin: 1em auto;
 }
 

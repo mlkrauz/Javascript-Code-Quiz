@@ -1,27 +1,67 @@
 //#region querySelectors
-
 var quizHeaderEl = document.querySelector("#quiz-header");
 var quizContentEl = document.querySelector("#quiz-content");
 var quizFooterEl = document.querySelector("#quiz-footer");
 var buttonStartStop = document.querySelector("#startStopButton");
-
 //#endregion querySelectors
+
+//#region variables
+var questionIndex = 0;
+
+//Build up an array of QuizItems
+
+//#endregion variables
+
+//class to handle the quiz game itself.
+class QuizGame {
+    constructor() {
+        this.gameStarted = false;
+        this.questionBank = [];
+    }
+
+    //add question to questionBank
+    addQuizItem(quizItemInput) {
+        if (quizItemInput instanceof QuizItem) {
+            this.questionBank.push(quizItemInput);
+        } else if (Array.isArray(quizItemInput)) {
+            //if it's an array, it's probably an array of quizItems - iterate through and recall
+            for (var i = 0; i < quizItemInput.length; i++) {
+                this.addQuizItem(quizItemInput[i]);
+            }
+        } else {
+            console.log("addQuizItem called, but passed variable is not a quizItem or an array of quizItems!");
+        }
+    }
+
+    getQuestionBank() {
+        return this.questionBank;
+    }
+}
 
 //class object for handling QuizItems
 class QuizItem {
 
     //quizItem ctor
-    constructor(question, correctA, wrongA1, wrongA2, wrongA3) {
+    constructor(question, correctA) {
         this.question = question;
         this.correctA = correctA;
-        this.answers = [correctA, wrongA1, wrongA2, wrongA3];
+        this.answers = [correctA];
+    }
+
+    addWrongAnswers(wrongA) {
+        if (Array.isArray(wrongA)) {
+            this.answers = this.answers.concat(wrongA);
+        } else {
+            this.answers.push(wrongA);
+        }
     }
 
     //Creates question & answer elements, randomizes answer order, and appends answers to a div element.
     //Returns unappended div element, and appended question/answer children.
     createElements() {
-        //Create div container
+        //Create div containers
         var divEl = document.createElement("div");
+        var innerDivEl = document.createElement("div");
 
         //Create h3 element for title, set its text to the question, append to div.
         var questionEl = document.createElement("h3");
@@ -36,51 +76,34 @@ class QuizItem {
             var buttonEl = document.createElement("button");
             buttonEl.textContent = this.answers[answerIndex[i]];
 
-            divEl.append(buttonEl);
+            innerDivEl.append(buttonEl);
         }
+
+        divEl.appendChild(innerDivEl);
 
         return divEl;
     }
 }
 
-//Build up an array of QuizItems
-var questionBank = [
-    new QuizItem(
-        "Which of the following is NOT a primitive type?",
-        "object",
-        "boolean",
-        "string",
-        "number"
-    ),
-    new QuizItem(
-        "Placeholder question 1",
-        "correct answer",
-        "wrong answer 1",
-        "wrong answer 2",
-        "wrong answer 3"
-    ),
-    new QuizItem(
-        "Placeholder question 2",
-        "correct answer",
-        "wrong answer 1",
-        "wrong answer 2",
-        "wrong answer 3"
-    ),
-    new QuizItem(
-        "Placeholder question 3",
-        "correct answer",
-        "wrong answer 1",
-        "wrong answer 2",
-        "wrong answer 3"
-    ),
-    new QuizItem(
-        "Placeholder question 4",
-        "correct answer",
-        "wrong answer 1",
-        "wrong answer 2",
-        "wrong answer 3"
-    )
-];
+var theQuizGame = new QuizGame();
+
+function init() {
+    //Build up question bank
+    var q1 = new QuizItem("Which of the following is NOT a primitive type?", "object");
+    q1.addWrongAnswers(["boolean", "string", "number"]);
+    var q2 = new QuizItem("Placeholder question 1", "correct answer");
+    q2.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
+    var q3 = new QuizItem("Placeholder question 2", "correct answer");
+    q3.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
+    var q4 = new QuizItem("Placeholder question 3", "correct answer");
+    q4.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
+    var q5 = new QuizItem("Placeholder question 4", "correct answer");
+    q5.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
+
+    //add questions to the game's question bank
+    theQuizGame.addQuizItem([q1, q2, q3, q4, q5]);
+
+}
 
 
 
@@ -88,18 +111,16 @@ function startQuiz() {
     buttonStartStop.setAttribute("disabled","true");
 
     //shuffle index - to randomize the question order
-    var questionIndex = shuffleIndex(questionBank.length);
+    var questionIndex = shuffleIndex(theQuizGame.getQuestionBank.length);
     
-    for (var i = 0; i < questionBank.length; i++) {
+    for (var i = 0; i < theQuizGame.getQuestionBank.length; i++) {
         
         
     }
-
-    quizContentEl.append(questionBank[0].createElements())
+    quizContentEl.append(theQuizGame.getQuestionBank()[0].createElements());
 }
 
 //#region helperFunctions
-
 //My less-than-efficient implementation of the fisher-yates shuffle algorithm.
 //returns an array of length arrayLength containing shuffled index positions.
 function shuffleIndex(arrayLength) {
@@ -122,11 +143,12 @@ function shuffleIndex(arrayLength) {
 
     return newIndex;
 }
-
-//#endregion
+//#endregion helperFunctions
 
 //#region eventListeners
 buttonStartStop.addEventListener("click", function(){
-    startQuiz()
-})
-//#endregion
+    startQuiz();
+});
+//#endregion eventListeners
+
+init();

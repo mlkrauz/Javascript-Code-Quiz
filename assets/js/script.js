@@ -13,6 +13,7 @@ class QuizGame {
         this.currentElementTree;
         this.shuffledIndex;
         this.currentQuestionIndex;
+        this.secondsLeft;
     }
 
     //add question to questionBank
@@ -38,7 +39,7 @@ class QuizGame {
         //just wrap buttons in an array for ease of use
         buttons = Array.from(buttons);
         //create listeners
-        buttons.forEach(function _(element) {
+        buttons.forEach(function(element) {
             element.addEventListener("click", this.answerSelected)
         }, this);
 
@@ -50,7 +51,7 @@ class QuizGame {
         var buttons = this.currentElementTree.childNodes[1].children;
         buttons = Array.from(buttons);
         //remove listeners
-        buttons.forEach(function _(element) {
+        buttons.forEach(function(element) {
             element.removeEventListener("click", this.answerSelected);
         }, this);
 
@@ -62,24 +63,58 @@ class QuizGame {
         var sender = event.target;
         theQuizGame.removeElementTree();
 
-        if (theQuizGame.currentQuestionIndex < theQuizGame.questionBank.length - 1) {
+        console.log(sender.textContent);
+        //if (sender.)
+
+        if (theQuizGame.secondsLeft > 0 && theQuizGame.currentQuestionIndex < theQuizGame.questionBank.length - 1) {
             //next question
             theQuizGame.currentQuestionIndex++;
             theQuizGame.appendElementTree();
         } else {
-
+            theQuizGame.endQuiz();
         }
+    }
+
+    startTimer() {
+        function timerFunction(thisContext) {
+            thisContext.updateScore(-1);
+
+            if (thisContext.secondsLeft === 0) {
+                thisContext.endQuiz();
+            }
+        }
+
+        var self = this;
+        
+        //this hurts my head.
+        this.timer = setInterval(function(){timerFunction(self)}, 1000);
+    }
+
+    updateScore(decrementNum) {
+        this.secondsLeft += decrementNum;
+        quizHeaderEl.childNodes[1].textContent = ("Question " + (this.currentQuestionIndex + 1) + " | Score: " + this.secondsLeft);
+    }
+
+    endQuiz() {
+        buttonStartStop.setAttribute("disabled","false");
+        this.gameStarted = false;
+        this.currentQuestionIndex = 0;
+        clearInterval(this.timer);
+        this.secondsLeft = 60; 
     }
     
     startQuiz() {
         buttonStartStop.setAttribute("disabled","true");
         this.gameStarted = true;
         this.currentQuestionIndex = 0;
+        this.secondsLeft = 60;
     
         //shuffle index - to randomize the question order
         this.shuffledIndex = shuffleIndex(this.questionBank.length);
         
         this.appendElementTree();
+        this.startTimer();
+
     }
 }
 

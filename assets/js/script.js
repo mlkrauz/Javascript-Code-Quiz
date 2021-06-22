@@ -5,13 +5,6 @@ var quizFooterEl = document.querySelector("#quiz-footer");
 var buttonStartStop = document.querySelector("#startStopButton");
 //#endregion querySelectors
 
-//#region variables
-var questionIndex = 0;
-
-//Build up an array of QuizItems
-
-//#endregion variables
-
 //class to handle the quiz game itself.
 class QuizGame {
     constructor() {
@@ -35,6 +28,19 @@ class QuizGame {
 
     getQuestionBank() {
         return this.questionBank;
+    }
+
+    startQuiz() {
+        buttonStartStop.setAttribute("disabled","true");
+    
+        //shuffle index - to randomize the question order
+        this.questionIndex = shuffleIndex(this.getQuestionBank.length);
+        
+        for (var i = 0; i < this.getQuestionBank.length; i++) {
+            
+            
+        }
+        quizContentEl.append(this.getQuestionBank()[0].createElements());
     }
 }
 
@@ -107,19 +113,6 @@ function init() {
 
 
 
-function startQuiz() {
-    buttonStartStop.setAttribute("disabled","true");
-
-    //shuffle index - to randomize the question order
-    var questionIndex = shuffleIndex(theQuizGame.getQuestionBank.length);
-    
-    for (var i = 0; i < theQuizGame.getQuestionBank.length; i++) {
-        
-        
-    }
-    quizContentEl.append(theQuizGame.getQuestionBank()[0].createElements());
-}
-
 //#region helperFunctions
 //My less-than-efficient implementation of the fisher-yates shuffle algorithm.
 //returns an array of length arrayLength containing shuffled index positions.
@@ -147,7 +140,7 @@ function shuffleIndex(arrayLength) {
 
 //#region eventListeners
 buttonStartStop.addEventListener("click", function(){
-    startQuiz();
+    theQuizGame.startQuiz();
 });
 //#endregion eventListeners
 

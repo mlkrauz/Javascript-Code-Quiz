@@ -10,6 +10,9 @@ class QuizGame {
     constructor() {
         this.gameStarted = false;
         this.questionBank = [];
+        this.currentElementTree;
+        this.shuffledIndex;
+        this.currentQuestionIndex;
     }
 
     //add question to questionBank
@@ -26,21 +29,57 @@ class QuizGame {
         }
     }
 
-    getQuestionBank() {
-        return this.questionBank;
+    appendElementTree() {
+        //remember; questions are shuffled too, so we retrieve the ordering from the shuffled index using the real index counter.
+        this.currentElementTree = this.questionBank[this.shuffledIndex[this.currentQuestionIndex]].createElements();
+        
+        //this may be bad practice? I don't like hard coding for the second (and last) element ouf of the nodeList. It betrays all of this abstraction I've done.
+        var buttons = this.currentElementTree.childNodes[1].children;
+        //just wrap buttons in an array for ease of use
+        buttons = Array.from(buttons);
+        //create listeners
+        buttons.forEach(function _(element) {
+            element.addEventListener("click", this.answerSelected)
+        }, this);
+
+        //append to DOM under the quizContentElement
+        quizContentEl.append(this.currentElementTree);
     }
 
+    removeElementTree() {
+        var buttons = this.currentElementTree.childNodes[1].children;
+        buttons = Array.from(buttons);
+        //remove listeners
+        buttons.forEach(function _(element) {
+            element.removeEventListener("click", this.answerSelected);
+        }, this);
+
+        this.currentElementTree.remove();
+    }
+
+    //it's by this point that I understand that setting this up as a class was a bad BAD idea. 'this' gets determined at runtime? I don't have time to redo everything and learn how to use .bind()
+    answerSelected(event) {
+        var sender = event.target;
+        theQuizGame.removeElementTree();
+
+        if (theQuizGame.currentQuestionIndex < theQuizGame.questionBank.length - 1) {
+            //next question
+            theQuizGame.currentQuestionIndex++;
+            theQuizGame.appendElementTree();
+        } else {
+
+        }
+    }
+    
     startQuiz() {
         buttonStartStop.setAttribute("disabled","true");
+        this.gameStarted = true;
+        this.currentQuestionIndex = 0;
     
         //shuffle index - to randomize the question order
-        this.questionIndex = shuffleIndex(this.getQuestionBank.length);
+        this.shuffledIndex = shuffleIndex(this.questionBank.length);
         
-        for (var i = 0; i < this.getQuestionBank.length; i++) {
-            
-            
-        }
-        quizContentEl.append(this.getQuestionBank()[0].createElements());
+        this.appendElementTree();
     }
 }
 

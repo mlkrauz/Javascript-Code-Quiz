@@ -67,7 +67,7 @@ class QuizGame {
             theQuizGame.questionBank[theQuizGame.shuffledIndex[theQuizGame.currentQuestionIndex]].correctA) {
                 //correct answer
             } else {
-                theQuizGame.updateScore(-10);
+                theQuizGame.updateScore(-100);
             }
 
         if (theQuizGame.secondsLeft > 0 && theQuizGame.currentQuestionIndex < theQuizGame.questionBank.length - 1) {
@@ -92,7 +92,7 @@ class QuizGame {
         var self = this;
         
         //this hurts my head.
-        this.timer = setInterval(function(){timerFunction(self)}, 1000);
+        this.timer = setInterval(function(){timerFunction(self)}, 100);
     }
 
     updateScore(decrementNum) {
@@ -103,20 +103,64 @@ class QuizGame {
         }
     }
 
+    setLeaderboard(newScore, newInitials) {
+        var leaderboardCheck = localStorage.getItem("leaderboard");
+        //did we already define this.leaderboard?
+        if (!leaderboardCheck) {
+            this.leaderboard = {
+                topScore: newScore,
+                topInitials: newInitials,
+                latestScore: newScore,
+                latestInitials: newInitials
+            };
+        } else {
+            //check for new highscore
+            if (newScore > this.leaderboard.topScore) {
+                this.leaderboard.topScore = newScore;
+                this.leaderboard.topInitials = newInitials;
+            }
+            //save latest score
+            this.leaderboard.latestScore = newScore;
+            this.leaderboard.latestInitials = newInitials;
+        }
+
+        //save in local storage
+        localStorage.setItem("leaderboard", JSON.stringify(this.leaderboard));
+        //update quiz footer header element
+        this.updateLeaderBoard();
+    }
+
+    updateLeaderBoard() {
+        var leaderboardCheck = localStorage.getItem("leaderboard");
+        //first time running on this browser?
+        if (!leaderboardCheck) {
+            return;
+        } else {
+            //set each time, just in case it's the first loading of the script
+            this.leaderboard = JSON.parse(leaderboardCheck);
+            quizFooterEl.childNodes[1].textContent = ("Highscore) " + this.leaderboard.topInitials + " - " + this.leaderboard.topScore +
+                " | " + this.leaderboard.latestInitials + " - " + this.leaderboard.latestScore + " (Latest score");
+        }
+    }
+
     endQuiz() {
-        buttonStartStop.setAttribute("disabled","false");
+        buttonStartStop.removeAttribute("disabled");
         this.gameStarted = false;
         this.removeElementTree();
         this.currentQuestionIndex = 0;
         clearInterval(this.timer);
-        this.secondsLeft = 60; 
+
+        var initials = prompt("Please enter your initials.", "AAA");
+        this.setLeaderboard(this.secondsLeft, initials);
+
+        this.secondsLeft = 600; 
     }
     
     startQuiz() {
         buttonStartStop.setAttribute("disabled","true");
         this.gameStarted = true;
         this.currentQuestionIndex = 0;
-        this.secondsLeft = 60;
+        this.secondsLeft = 600;
     
         //shuffle index - to randomize the question order
         this.shuffledIndex = shuffleIndex(this.questionBank.length);
@@ -181,17 +225,18 @@ function init() {
     //Build up question bank
     var q1 = new QuizItem("Which of the following is NOT a primitive type?", "object");
     q1.addWrongAnswers(["boolean", "string", "number"]);
-    var q2 = new QuizItem("Placeholder question 1", "correct answer");
-    q2.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
-    var q3 = new QuizItem("Placeholder question 2", "correct answer");
-    q3.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
-    var q4 = new QuizItem("Placeholder question 3", "correct answer");
-    q4.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
-    var q5 = new QuizItem("Placeholder question 4", "correct answer");
-    q5.addWrongAnswers(["wrong answer 1", "wrong answer 2", "wrong answer 3"]);
+    var q2 = new QuizItem("Which symbol(s) is NOT an operator?", "//");
+    q2.addWrongAnswers(["&&", "||", "==", "++", "--"]);
+    var q3 = new QuizItem("Which type of brackets would be used in a function call?", "function ()");
+    q3.addWrongAnswers(["function []", "function {}"]);
+    var q4 = new QuizItem("What interface can be used to access HTML elements with javascript?", "DOM");
+    q4.addWrongAnswers(["COM", "XML", "HTTP"]);
+    var q5 = new QuizItem("Commenting your code is", "useful for your future self and others");
+    q5.addWrongAnswers(["dumb and a waste of time"]);
 
     //add questions to the game's question bank
     theQuizGame.addQuizItem([q1, q2, q3, q4, q5]);
+    theQuizGame.updateLeaderBoard();
 
 }
 

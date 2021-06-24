@@ -61,14 +61,19 @@ class QuizGame {
     //it's by this point that I understand that setting this up as a class was a bad BAD idea. 'this' gets determined at runtime? I don't have time to redo everything and learn how to use .bind()
     answerSelected(event) {
         var sender = event.target;
-        theQuizGame.removeElementTree();
 
-        console.log(sender.textContent);
-        //if (sender.)
+        //console.log(sender.textContent);
+        if (sender.textContent == 
+            theQuizGame.questionBank[theQuizGame.shuffledIndex[theQuizGame.currentQuestionIndex]].correctA) {
+                //correct answer
+            } else {
+                theQuizGame.updateScore(-10);
+            }
 
         if (theQuizGame.secondsLeft > 0 && theQuizGame.currentQuestionIndex < theQuizGame.questionBank.length - 1) {
             //next question
             theQuizGame.currentQuestionIndex++;
+            theQuizGame.removeElementTree();
             theQuizGame.appendElementTree();
         } else {
             theQuizGame.endQuiz();
@@ -93,11 +98,15 @@ class QuizGame {
     updateScore(decrementNum) {
         this.secondsLeft += decrementNum;
         quizHeaderEl.childNodes[1].textContent = ("Question " + (this.currentQuestionIndex + 1) + " | Score: " + this.secondsLeft);
+        if (this.secondsLeft === 0) {
+            this.endQuiz();
+        }
     }
 
     endQuiz() {
         buttonStartStop.setAttribute("disabled","false");
         this.gameStarted = false;
+        this.removeElementTree();
         this.currentQuestionIndex = 0;
         clearInterval(this.timer);
         this.secondsLeft = 60; 
@@ -113,6 +122,7 @@ class QuizGame {
         this.shuffledIndex = shuffleIndex(this.questionBank.length);
         
         this.appendElementTree();
+        this.updateScore(0); //immediately display score, before the lag in time it takes to start timer.
         this.startTimer();
 
     }
